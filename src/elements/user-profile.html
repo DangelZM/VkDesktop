@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="user-profile">
+    <style>
+        :host {
+            display: block;
+            width: 100%;
+            color: #fff;
+        }
+
+        .image > img {
+            border-radius: 50%;
+            margin: 0 auto;
+            display: inherit;
+        }
+
+        .fullname {
+            text-align: center;
+            padding-top: 20px;
+        }
+    </style>
+    <template>
+        <iron-ajax auto
+                   url="{{getUrl()}}"
+                   handle-as="json"
+                   last-response="{{data}}"></iron-ajax>
+        <div class="holder">
+            <div class="info">
+                <div class="image"><img src="[[data.response.0.photo_100]]" alt=""/></div>
+                <div class="fullname"><span>[[data.response.0.first_name]]</span> <span>[[data.response.0.last_name]]</span></div>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: "user-profile",
+            getUrl: function () {
+                return "https://api.vk.com/method/users.get?fields=photo_100,city,verified&v=5.37&access_token=" + localStorage.access_token
+            }
+        });
+    </script>
+</dom-module>
+

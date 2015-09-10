@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../elements/player.html">
+
+<dom-module id="audio-screen">
+    <style>
+        #audio-list {
+            padding: 0 15px 15px;
+        }
+        .audio-item {
+            display: flex;
+            flex-direction: row;
+        }
+        .audio-item .title {
+            flex: auto;
+        }
+    </style>
+    <template>
+        <iron-ajax id="ajax" auto
+            handle-as="json"
+            last-response="{{data}}"></iron-ajax>
+        <paper-header-panel mode="standard">
+            <paper-toolbar id="mainToolbar">
+                <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                <div>Аудиозаписи</div>
+            </paper-toolbar>
+            <audio-player source="[[activeSong]]" ></audio-player>
+            <div id="audio-list" class="content">
+                <iron-list items="[[data.response.items]]" as="item" selected-item="{{activeSong}}" selection-enabled>
+                    <template>
+                        <div class="audio-item">
+                            <paper-icon-button icon$="{{iconForItem(selected)}}"></paper-icon-button>
+                            <div class="title">
+                                <span>[[item.artist]]</span> - <span>[[item.title]]</span>
+                            </div>
+                        </div>
+                    </template>
+                </iron-list>
+            </div>
+        </paper-header-panel>
+    </template>
+    <script>
+        Polymer({
+            is: "audio-screen",
+            properties: {
+              activeSong: {
+                  type: Object,
+                  observer: '_activeSongChanged'
+              }
+            },
+            ready: function(){
+                this.$.ajax.url = "https://api.vk.com/method/audio.get?v=5.37&access_token=" + localStorage.access_token;
+            },
+            iconForItem: function(isSelected) {
+                return isSelected ? 'av:pause' : 'av:play-arrow';
+            },
+            _activeSongChanged: function (newValue, oldValue) {
+                console.log('ActiveSong', newValue, oldValue);
+            }
+        });
+    </script>
+</dom-module>

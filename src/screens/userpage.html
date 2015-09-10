@@ -1,0 +1,84 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+
+
+<dom-module id="userpage-screen">
+    <style>
+        #back-button {
+            cursor: pointer;
+        }
+        #page-title {
+            background: #ededed;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        #page-holder {
+            padding: 15px;
+            display: flex;
+            flex-direction: row;
+        }
+        #sidebar {
+            flex-basis: 200px;
+            min-width: 200px;
+            margin-right: 15px;
+        }
+        #sidebar > img {
+            max-width: 100%;
+        }
+        #info {
+            flex: auto;
+        }
+    </style>
+    <template>
+        <iron-ajax id="ajax" auto
+                   handle-as="json"
+                   last-response="{{data}}"></iron-ajax>
+        <paper-header-panel mode="standard">
+            <paper-toolbar id="mainToolbar">
+                <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                <paper-button id="back-button">
+                    <iron-icon icon="arrow-back"></iron-icon>
+                    Список друзей
+                </paper-button>
+            </paper-toolbar>
+            <div id="page-title"><span>[[data.response.0.first_name]]</span> <span>[[data.response.0.last_name]]</span></div>
+            <div id="page-holder" class="content">
+                <div id="sidebar">
+                    <img src="[[data.response.0.photo_200_orig]]" alt=""/>
+                </div>
+                <div id="info">
+                    <div>[[data.response.0.status]]</div>
+                    <div>[[data.response.0.photo_id]]</div>
+                    <div>[[data.response.0.bdate]]</div>
+                </div>
+            </div>
+        </paper-header-panel>
+    </template>
+    <script>
+        Polymer({
+            is: "userpage-screen",
+            properties: {
+                screenParams: Object
+            },
+            listeners: {
+                'back-button.tap': 'back'
+            },
+            back: function (e) {
+                e.stopPropagation();
+                app.route = 'friends';
+            },
+            itemTap: function(e) {
+                app.route = 'userpage|' + JSON.stringify({id: this.itemData.id});
+            },
+            setScreenParams: function (data) {
+                console.log('ScreenParams :', data);
+                this.set('screenParams', data);
+            },
+            attached: function(){
+                var fields = 'photo_200_orig,bdate,status';
+                this.$.ajax.url = "https://api.vk.com/method/users.get?v=5.37&user_ids=" + this.screenParams.id + "&fields=" + fields + "&access_token=" + localStorage.access_token;
+            }
+        });
+    </script>
+</dom-module>

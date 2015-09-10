@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+
+
+<dom-module id="feeds-screen">
+    <template>
+        <iron-ajax id="ajax" auto
+                   handle-as="json"
+                   last-response="{{data}}"></iron-ajax>
+        <paper-toolbar id="mainToolbar">
+            <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+            <div>Новости</div>
+        </paper-toolbar>
+        <div>
+            <template is="dom-repeat" items="[[data.response.items]]">
+                <div>[[item.type]]</div>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: "feeds-screen",
+            ready: function(){
+                this.$.ajax.url = "https://api.vk.com/method/newsfeed.get?v=5.37&access_token=" + localStorage.access_token;
+            }
+        });
+    </script>
+</dom-module>

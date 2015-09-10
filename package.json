@@ -1,0 +1,25 @@
+{
+  "name": "VkDesktop",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.html",
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-shell": "^0.2.9",
+    "nw-builder": "^2.0.2",
+    "require-dir": "^0.3.0"
+  },
+  "single-instance": false,
+  "window": {
+    "show": true,
+    "title": "VK",
+    "toolbar": true,
+    "frame": true,
+    "position": "center",
+    "fullscreen": false,
+    "width": 1024,
+    "height": 680
+  },
+  "node-remote": "<local> , vk.com, .vk.com,  *.vk.com, oauth.vk.com, .vk-cdn.net, *.vk-cdn.net",
+  "chromium-args": "--disable-setuid-sandbox"
+}

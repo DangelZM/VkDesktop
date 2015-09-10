@@ -1,0 +1,60 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../screens/feeds.html"/>
+<link rel="import" href="../screens/friends.html"/>
+<link rel="import" href="../screens/userpage.html"/>
+<link rel="import" href="../screens/audio.html"/>
+
+<dom-module id="main-view">
+    <style>
+        :host {
+            display: block;
+            color: #333;
+            margin-left: -1px;
+        }
+
+        #screenHolder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+    <template>
+        <div id="screenHolder"></div>
+    </template>
+    <script>
+        Polymer({
+            is: "main-view",
+            properties: {
+                route: {
+                    type: String,
+                    notify: true,
+                    observer: '_routeChanged'
+                }
+            },
+            _routeChanged: function (newRoute, oldRoute) {
+                console.log(newRoute);
+                var screenRoute = newRoute;
+                var screenParams = null;
+
+                if(newRoute.indexOf('|') > 0 ){
+                    var routeParams = newRoute.split('|');
+                    console.log('Route data: ', routeParams);
+                    screenRoute = routeParams[0];
+                    screenParams = JSON.parse(routeParams[1]);
+                }
+                console.log('Route screen: ', screenRoute, screenParams);
+
+                var screen = document.createElement(screenRoute + '-screen');
+                this.$.screenHolder.innerHTML = '';
+                if(screenParams) {
+                    screen.setScreenParams(screenParams);
+                }
+                this.$.screenHolder.appendChild(screen);
+            }
+        });
+    </script>
+</dom-module>
+

@@ -1,0 +1,74 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="audio-player">
+    <style>
+        :host {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        canvas {
+            flex-basis: 50px;
+        }
+        audio {
+            flex: auto;
+            width: auto;
+        }
+        .song-title {
+            font-size: 16px;
+            padding: 5px 0;
+            position: absolute;
+            top: 25px;
+            left: 15px;
+            color: #fff;
+            text-shadow: 0 0 ;
+        }
+        audio::-webkit-media-controls-panel {
+            background: #369;
+        }
+    </style>
+    <template>
+        <!--<canvas id="canvas"></canvas>-->
+        <audio id="audio" src$="{{source.url}}" controls preload="auto"></audio>
+        <!--<div class="song-title" title="{{song}}">{{song}}</div>-->
+    </template>
+    <script>
+        Polymer({
+            is: "audio-player",
+            properties: {
+                source: {
+                    type: Object,
+                    observer: '_sourceChanged'
+                }
+            },
+            _sourceChanged: function (newValue, oldValue) {
+                console.log('_sourceChanged', newValue, oldValue);
+            },
+            attached: function () {
+                /*var eqColor = this.color;
+                var canvas = this.$.canvas, ctx = canvas.getContext('2d');
+                var audio = this.$.audio,
+                        audioContext = new AudioContext(),
+                        source = audioContext.createMediaElementSource(audio),
+                        analyser = audioContext.createAnalyser();
+
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+
+                setInterval(function(){
+                    var width = 150, height = 50;
+                    var freqData = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(freqData);
+                    ctx.clearRect(0, 0, width, height);
+                    for (var i = 0; i < freqData.length; i++ ) {
+                        var magnitude = freqData[i];
+                        ctx.fillStyle= eqColor;
+                        ctx.fillRect(i*2, height, 1.5, -magnitude/5);
+                    }
+
+                }, 33);*/
+            }
+        });
+    </script>
+</dom-module>
+

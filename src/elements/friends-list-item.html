@@ -1,0 +1,48 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="friends-list-item">
+    <style>
+        :host {
+            display: flex;
+            flex-direction: row;
+            border-bottom: 1px solid #ddd;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .friend-img {
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            flex-basis: 50px;
+        }
+        .fullname {
+            flex: 1 0 auto;
+            line-height: 50px;
+            padding-left: 15px;
+        }
+    </style>
+    <template>
+        <img class="friend-img" src="[[itemData.photo_50]]" alt="" />
+        <div class="fullname">
+            <span>[[itemData.first_name]]</span> <span>[[itemData.last_name]]</span>
+            <template is="dom-if" if="{{itemData.online}}">(OnLine)</template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: "friends-list-item",
+            properties: {
+                itemData: Object
+            },
+            listeners: {
+                'tap': 'itemTap'
+            },
+            itemTap: function(e) {
+                app.route = 'userpage|' + JSON.stringify({id: this.itemData.id});
+            }
+        });
+    </script>
+</dom-module>
+

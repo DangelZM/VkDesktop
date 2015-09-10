@@ -1,0 +1,43 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../elements/friends-list-item.html">
+
+
+<dom-module id="friends-screen">
+    <style>
+        #subheader {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        #list-holder {
+            padding: 0 15px 15px;
+        }
+    </style>
+    <template>
+        <iron-ajax id="ajax" auto
+            handle-as="json"
+            last-response="{{data}}"></iron-ajax>
+        <paper-header-panel mode="standard">
+            <paper-toolbar id="mainToolbar">
+                <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                <div>Друзья</div>
+            </paper-toolbar>
+            <div id="subheader">У вас <span>[[data.response.count]]</span> друзей</div>
+            <div id="list-holder" class="content">
+                <template is="dom-repeat" items="[[data.response.items]]">
+                    <friends-list-item item-data="[[item]]"></friends-list-item>
+                </template>
+            </div>
+        </paper-header-panel>
+    </template>
+    <script>
+        Polymer({
+            is: "friends-screen",
+            ready: function(){
+                var fields = 'photo_50,online';
+                this.$.ajax.url = "https://api.vk.com/method/friends.get?v=5.37&order=hints&fields=" + fields + "&access_token=" + localStorage.access_token;
+            }
+        });
+    </script>
+</dom-module>

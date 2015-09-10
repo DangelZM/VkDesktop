@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>VK</title>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+    <script>
+        var gui = require('nw.gui');
+        var currentWin = gui.Window.get();
+
+        if (!localStorage.access_token) {
+            startAuthFlow();
+        } else {
+            $.ajax( "https://api.vk.com/method/users.get?v=5.37&access_token=" + localStorage.access_token )
+            .done(function(response) {
+                console.log('done', response);
+                if(response.error && response.error.error_code === 5){
+                    startAuthFlow();
+                } else {
+                    startApp();
+                }
+            })
+            .fail(function(response) {
+                //TODO open error.html, show error
+                console.log('Fail', response);
+                startAuthFlow();
+            });
+        }
+
+        function startApp(){
+            currentWin.window.location.href = 'app.html';
+            currentWin.show();
+            currentWin.focus();
+        }
+
+        function startAuthFlow() {
+            var authStatus = false;
+            var scope = 'friends,wall,audio';
+            var authWin = gui.Window.open('https://oauth.vk.com/authorize?client_id=5053194&scope=' + scope + '&redirect_uri=blank.html&display=popup&response_type=token&v=5.37', {
+                show: true,
+                title: 'VK',
+                frame: true,
+                toolbar: true,
+                width: 600,
+                height: 400,
+                position: 'center'
+            });
+
+            authWin.on('close', function () {
+                this.hide();
+                if(!authStatus){
+                    currentWin.close(true);
+                }
+                this.close(true);
+            });
+
+            authWin.on('loaded', function(){
+                var timer = setInterval(function () {
+                    var url = authWin.window.location.href;
+                    var matches = url.match(/\#(?:access_token)\=([\S\s]*?)\&/);
+                    if(matches){
+                        authStatus = true;
+                        localStorage.access_token = matches[1];
+                        clearInterval(timer);
+
+                        /*authWin.cookies.getAll({},
+                         function(cookies) {
+                         for (var i=0; i < cookies.length; i++) {
+                         var cookie = cookies[i];
+                         var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
+                         authWin.cookies.remove({url: url, name: cookie.name },
+                         function(result) {
+                         console.log(result)
+                         }
+                         );
+                         }
+                         }
+                         );*/
+                        startApp();
+                        //authWin.close();
+                    } else {
+                        authWin.show();
+                    }
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>
